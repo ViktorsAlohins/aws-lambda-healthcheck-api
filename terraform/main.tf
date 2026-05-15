@@ -13,6 +13,34 @@ provider "aws" {
   region = var.aws_region
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "dynamodb_kms_policy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_kms_key" "dynamodb" {
+  description             = "${var.env} DynamoDB encryption key"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+  policy                  = data.aws_iam_policy_document.dynamodb_kms_policy.json
+}
+
+resource "aws_kms_alias" "dynamodb" {
+  name          = "alias/${var.env}-requests-db-key"
+  target_key_id = aws_kms_key.dynamodb.key_id
+}
+
 resource "aws_dynamodb_table" "requests" {
   name         = "${var.env}-requests-db"
   billing_mode = "PAY_PER_REQUEST"
@@ -24,7 +52,8 @@ resource "aws_dynamodb_table" "requests" {
   }
 
   server_side_encryption {
-    enabled = true
+    enabled     = true
+    kms_key_arn = aws_kms_key.dynamodb.arn
   }
 }
 
@@ -76,6 +105,19 @@ data "aws_iam_policy_document" "lambda_policy" {
 
     resources = [
       "${aws_cloudwatch_log_group.lambda.arn}:*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+
+    resources = [
+      aws_kms_key.dynamodb.arn
     ]
   }
 }

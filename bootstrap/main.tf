@@ -164,6 +164,29 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
 
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:CreateKey",
+      "kms:DescribeKey",
+      "kms:EnableKeyRotation",
+      "kms:GetKeyPolicy",
+      "kms:PutKeyPolicy",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:CreateAlias",
+      "kms:DeleteAlias",
+      "kms:ListAliases",
+      "kms:UpdateAlias",
+      "kms:GetKeyRotationStatus",
+    ]
+
+    resources = ["*"]
+  }
 }
 
 data "aws_iam_policy_document" "prod_deploy_policy" {
@@ -240,6 +263,29 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "apigateway:PUT",
       "apigateway:PATCH",
       "apigateway:DELETE",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:CreateKey",
+      "kms:DescribeKey",
+      "kms:EnableKeyRotation",
+      "kms:GetKeyPolicy",
+      "kms:PutKeyPolicy",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:CreateAlias",
+      "kms:DeleteAlias",
+      "kms:ListAliases",
+      "kms:UpdateAlias",
+      "kms:GetKeyRotationStatus",
     ]
 
     resources = ["*"]
