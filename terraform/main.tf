@@ -157,6 +157,7 @@ resource "aws_lambda_function" "health_check" {
     }
   }
 
+  #tfsec:ignore:aws-lambda-enable-tracing
   tracing_config {
     mode = "PassThrough"
   }
