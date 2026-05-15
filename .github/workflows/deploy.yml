@@ -17,10 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  plan:
     runs-on: ubuntu-latest
-
-    environment: ${{ inputs.environment }}
 
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +32,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-to-assume: ${{ inputs.environment == 'prod' && vars.PROD_AWS_ROLE_ARN || vars.STAGING_AWS_ROLE_ARN }}
           aws-region: eu-central-1
 
       - name: install scan tools
@@ -72,6 +70,41 @@ jobs:
 
       - name: terraform plan
         run: terraform -chdir=terraform plan -var-file="${{ inputs.environment }}.tfvars" -var="lambda_version=${{ github.sha }}"
+
+  deploy:
+    needs: plan
+    runs-on: ubuntu-latest
+
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: eu-central-1
+
+      - name: package lambda
+        run: |
+          cd lambda
+          zip ../lambda.zip handler.py
+
+      - name: terraform init
+        run: |
+          terraform -chdir=terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=${{ inputs.environment }}/terraform.tfstate" \
+            -backend-config="region=eu-central-1" \
+            -backend-config="use_lockfile=true" \
+            -backend-config="encrypt=true"
 
       - name: terraform apply
         run: terraform -chdir=terraform apply -auto-approve -var-file="${{ inputs.environment }}.tfvars" -var="lambda_version=${{ github.sha }}"
