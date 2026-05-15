@@ -170,6 +170,7 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "lambda:AddPermission",
       "lambda:RemovePermission",
       "lambda:GetPolicy",
+      "lambda:ListVersionsByFunction",
     ]
 
     resources = ["arn:aws:lambda:${var.aws_region}:*:function:staging-health-check-lambda"]
@@ -337,6 +338,7 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "lambda:AddPermission",
       "lambda:RemovePermission",
       "lambda:GetPolicy",
+      "lambda:ListVersionsByFunction",
     ]
 
     resources = ["arn:aws:lambda:${var.aws_region}:*:function:prod-health-check-lambda"]
