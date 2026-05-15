@@ -131,8 +131,8 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
     ]
 
     resources = [
-      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/staging-health-check-lambda",
-      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/staging-health-check-api",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/staging-health-check-lambda*",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/staging-health-check-api*",
     ]
   }
 
@@ -148,6 +148,7 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "iam:PutRolePolicy",
       "iam:DeleteRolePolicy",
       "iam:GetRolePolicy",
+      "iam:ListRolePolicies",
       "iam:PassRole",
     ]
 
@@ -181,6 +182,7 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "kms:CancelKeyDeletion",
       "kms:TagResource",
       "kms:UntagResource",
+      "kms:ListResourceTags",
       "kms:CreateAlias",
       "kms:DeleteAlias",
       "kms:ListAliases",
@@ -237,8 +239,8 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
     ]
 
     resources = [
-      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/prod-health-check-lambda",
-      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/prod-health-check-api",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/prod-health-check-lambda*",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/prod-health-check-api*",
     ]
   }
 
@@ -254,6 +256,7 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "iam:PutRolePolicy",
       "iam:DeleteRolePolicy",
       "iam:GetRolePolicy",
+      "iam:ListRolePolicies",
       "iam:PassRole",
     ]
 
@@ -287,6 +290,7 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "kms:CancelKeyDeletion",
       "kms:TagResource",
       "kms:UntagResource",
+      "kms:ListResourceTags",
       "kms:CreateAlias",
       "kms:DeleteAlias",
       "kms:ListAliases",
