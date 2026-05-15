@@ -130,7 +130,10 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "logs:PutRetentionPolicy",
     ]
 
-    resources = ["arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/staging-health-check-lambda"]
+    resources = [
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/staging-health-check-lambda",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/staging-health-check-api",
+    ]
   }
 
   statement {
@@ -233,7 +236,10 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "logs:PutRetentionPolicy",
     ]
 
-    resources = ["arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/prod-health-check-lambda"]
+    resources = [
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/prod-health-check-lambda",
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/prod-health-check-api",
+    ]
   }
 
   statement {
