@@ -10,16 +10,12 @@ table = dynamodb.Table(table_name)
 
 
 def handler(event, context):
+    print("incoming event:")
+    print(json.dumps(event))
+
     request_context = event.get("requestContext", {})
     http = request_context.get("http", {})
     method = http.get("method", "unknown")
-
-    print(json.dumps({
-        "message": "request received",
-        "method": method,
-        "path": event.get("rawPath", "/"),
-        "source_ip": http.get("sourceIp", "unknown")
-    }))
 
     body = {}
 
