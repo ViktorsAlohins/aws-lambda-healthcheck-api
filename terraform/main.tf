@@ -99,6 +99,7 @@ resource "aws_lambda_function" "health_check" {
   environment {
     variables = {
       requests_table = aws_dynamodb_table.requests.name
+      app_version    = var.lambda_version
     }
   }
 

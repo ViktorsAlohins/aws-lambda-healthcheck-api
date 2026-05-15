@@ -17,3 +17,8 @@ variable "api_rate_limit" {
 variable "api_burst_limit" {
   type = number
 }
+
+variable "lambda_version" {
+  type    = string
+  default = "local"
+}
