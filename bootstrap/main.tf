@@ -126,7 +126,6 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
     actions = [
       "logs:CreateLogGroup",
       "logs:DeleteLogGroup",
-      "logs:DescribeLogGroups",
       "logs:PutRetentionPolicy",
     ]
 
@@ -134,6 +133,16 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/staging-health-check-lambda*",
       "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/staging-health-check-api*",
     ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:DescribeLogGroups",
+    ]
+
+    resources = ["*"]
   }
 
   statement {
@@ -149,6 +158,7 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "iam:DeleteRolePolicy",
       "iam:GetRolePolicy",
       "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
       "iam:PassRole",
     ]
 
@@ -234,7 +244,6 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
     actions = [
       "logs:CreateLogGroup",
       "logs:DeleteLogGroup",
-      "logs:DescribeLogGroups",
       "logs:PutRetentionPolicy",
     ]
 
@@ -242,6 +251,16 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/prod-health-check-lambda*",
       "arn:aws:logs:${var.aws_region}:*:log-group:/aws/apigateway/prod-health-check-api*",
     ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:DescribeLogGroups",
+    ]
+
+    resources = ["*"]
   }
 
   statement {
@@ -257,6 +276,7 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "iam:DeleteRolePolicy",
       "iam:GetRolePolicy",
       "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
       "iam:PassRole",
     ]
 
