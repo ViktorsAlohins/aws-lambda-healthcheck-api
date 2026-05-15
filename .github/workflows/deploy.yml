@@ -1,0 +1,58 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: environment to deploy
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: scan terraform
+        run: tfsec terraform
+
+      - name: package lambda
+        run: |
+          cd lambda
+          zip ../lambda.zip handler.py
+
+      - name: terraform init
+        run: terraform -chdir=terraform init
+
+      - name: terraform fmt
+        run: terraform -chdir=terraform fmt -check
+
+      - name: terraform validate
+        run: terraform -chdir=terraform validate
+
+      - name: terraform plan
+        run: terraform -chdir=terraform plan -var-file="${{ inputs.environment }}.tfvars"
+
+      - name: terraform apply
+        run: terraform -chdir=terraform apply -auto-approve -var-file="${{ inputs.environment }}.tfvars"
