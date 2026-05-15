@@ -119,13 +119,6 @@ resource "aws_apigatewayv2_integration" "lambda" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_integration" "lambda" {
-  api_id                 = aws_apigatewayv2_api.health_check.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = aws_lambda_function.health_check.invoke_arn
-  payload_format_version = "2.0"
-}
-
 resource "aws_apigatewayv2_route" "get_health" {
   api_id    = aws_apigatewayv2_api.health_check.id
   route_key = "GET /health"
