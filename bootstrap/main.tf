@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.8.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     aws = {
@@ -171,6 +171,10 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "lambda:RemovePermission",
       "lambda:GetPolicy",
       "lambda:ListVersionsByFunction",
+      "lambda:GetFunctionCodeSigningConfig",
+      "lambda:GetFunctionConcurrency",
+      "lambda:GetFunctionEventInvokeConfig",
+      "lambda:ListFunctionEventInvokeConfigs",
     ]
 
     resources = ["arn:aws:lambda:${var.aws_region}:*:function:staging-health-check-lambda"]
@@ -339,6 +343,10 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "lambda:RemovePermission",
       "lambda:GetPolicy",
       "lambda:ListVersionsByFunction",
+      "lambda:GetFunctionCodeSigningConfig",
+      "lambda:GetFunctionConcurrency",
+      "lambda:GetFunctionEventInvokeConfig",
+      "lambda:ListFunctionEventInvokeConfigs",
     ]
 
     resources = ["arn:aws:lambda:${var.aws_region}:*:function:prod-health-check-lambda"]
