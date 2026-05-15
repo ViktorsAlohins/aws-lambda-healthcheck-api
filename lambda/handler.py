@@ -79,7 +79,7 @@ def handler(event, context):
             "content-type": "application/json"
         },
         "body": json.dumps({
-            "status": "ok",
-            "request_id": item["id"]
+            "status": "healthy",
+            "message": "Request processed and saved."
         })
     }
