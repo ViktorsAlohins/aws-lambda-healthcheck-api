@@ -127,6 +127,9 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
       "logs:CreateLogGroup",
       "logs:DeleteLogGroup",
       "logs:PutRetentionPolicy",
+      "logs:TagResource",
+      "logs:UntagResource",
+      "logs:ListTagsForResource",
     ]
 
     resources = [
@@ -184,6 +187,7 @@ data "aws_iam_policy_document" "staging_deploy_policy" {
 
     actions = [
       "kms:CreateKey",
+      "kms:CreateGrant",
       "kms:DescribeKey",
       "kms:EnableKeyRotation",
       "kms:GetKeyPolicy",
@@ -245,6 +249,9 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
       "logs:CreateLogGroup",
       "logs:DeleteLogGroup",
       "logs:PutRetentionPolicy",
+      "logs:TagResource",
+      "logs:UntagResource",
+      "logs:ListTagsForResource",
     ]
 
     resources = [
@@ -302,6 +309,7 @@ data "aws_iam_policy_document" "prod_deploy_policy" {
 
     actions = [
       "kms:CreateKey",
+      "kms:CreateGrant",
       "kms:DescribeKey",
       "kms:EnableKeyRotation",
       "kms:GetKeyPolicy",
