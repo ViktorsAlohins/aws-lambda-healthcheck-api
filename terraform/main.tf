@@ -55,10 +55,21 @@ resource "aws_dynamodb_table" "requests" {
     enabled     = true
     kms_key_arn = aws_kms_key.dynamodb.arn
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "lambda" {
   name              = "/aws/lambda/${var.env}-health-check-lambda"
+  retention_in_days = 14
+}
+
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/${var.env}-health-check-api"
   retention_in_days = 14
 }
 
@@ -103,6 +114,7 @@ data "aws_iam_policy_document" "lambda_policy" {
       "logs:PutLogEvents"
     ]
 
+    #tfsec:ignore:aws-iam-no-policy-wildcards
     resources = [
       "${aws_cloudwatch_log_group.lambda.arn}:*"
     ]
@@ -145,6 +157,10 @@ resource "aws_lambda_function" "health_check" {
     }
   }
 
+  tracing_config {
+    mode = "PassThrough"
+  }
+
   depends_on = [
     aws_cloudwatch_log_group.lambda
   ]
@@ -178,6 +194,11 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.health_check.id
   name        = "$default"
   auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+    format          = "$context.requestId $context.httpMethod $context.routeKey $context.status $context.responseLength $context.requestTime"
+  }
 
   default_route_settings {
     throttling_rate_limit  = var.api_rate_limit
